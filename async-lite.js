@@ -179,25 +179,24 @@
 
     // https://github.com/rzr/async-waterfall
     waterfall: function waterfall(functions, callback /* ... */) {
-      var res = Array.prototype.slice.call(arguments, 2);
+      var results = Array.prototype.slice.call(arguments, 2);
       if (!functions.length) {
-        res.splice(0, 0, null);  // insert "err" before "res"
-        callback.apply(null, res);
+        results.splice(0, 0, null);  // insert "err" before "results"
+        callback.apply(null, results);
       } else {
         var funct = functions.shift();
-        res.push(function(err) {
+        results.push(function(err,res) {
           if (err) {
-            return callback(err);
+              return callback(err,res);
           }
           var args = [functions, callback];
           Array.prototype.push.apply(
             args, Array.prototype.slice.call(arguments, 1));
           waterfall.apply(null, args);
         });
-        funct.apply(null, res);
+        funct.apply(null, results);
       }
     }
-
   };
 
   // Node.js
